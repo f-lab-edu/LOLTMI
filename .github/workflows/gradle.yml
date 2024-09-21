@@ -85,22 +85,23 @@ jobs:
           sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
           sudo docker image prune -f
           
-    # - name: Batch Jar file SCP send
-    #   run: |
-    #     touch ./key.pem
-    #     echo "${{ secrets.NCP_KEY }}" > ./key.pem
-    #     chmod 400 ./key.pem
-    #     scp -o StrictHostKeyChecking=no -i ./key.pem batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
+    - name: Batch Jar file SCP send
+      run: |
+        ls
+        touch ./key.pem
+        echo "${{ secrets.NCP_KEY }}" > ./key.pem
+        chmod 400 ./key.pem
+        scp -o StrictHostKeyChecking=no -i ./key.pem batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
 
     - name: Checkout
       uses: actions/checkout@v3
       
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
-        source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-        target: "/root/jenkins/workspace/spring-batch"
+    # - name: copy file via ssh password
+    #   uses: appleboy/scp-action@v0.1.7
+    #   with:
+    #     host: ${{ secrets.NCP_HOST }}
+    #     username: ${{ secrets.NCP_USERNAME }}
+    #     password: ${{ secrets.NCP_PASSWORD }}
+    #     port: ${{ secrets.NCP_PORT }}
+    #     source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+    #     target: "/root/jenkins/workspace/spring-batch"
