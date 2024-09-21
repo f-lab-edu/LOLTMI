@@ -71,7 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          script: ls batch
+          script: cd batch 
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.7
         with:
