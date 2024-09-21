@@ -94,6 +94,9 @@ jobs:
     #     scp -o StrictHostKeyChecking=no -i ./key.pem batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
 
     - uses: actions/checkout@v4
+    
+    - run: cd batch/build/libs
+
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.7
       with:
