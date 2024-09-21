@@ -32,6 +32,7 @@ jobs:
       # SECRET_YML 파일 생성
     - name: Make application-secret.yml
       run: |
+        pwd
         cd ./common/src/main/resources # resources 폴더로 이동
         touch ./application-secret.yml # application.yml 생성
         echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
