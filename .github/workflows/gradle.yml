@@ -63,6 +63,16 @@ jobs:
     - name: DockerHub Push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.NCP_HOST }}
+        username: ${{ secrets.NCP_USERNAME }}
+        password: ${{ secrets.NCP_PASSWORD }}
+        port: ${{ secrets.NCP_PORT }}
+        source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+        target: "/root/jenkins/workspace/spring-batch"
+        
   deploy:
     # needs를 통해 build job이 수행 성공시에 작업되도록 설정
     needs: build
@@ -70,17 +80,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          script: cd batch 
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.NCP_HOST }}
-          username: ${{ secrets.NCP_USERNAME }}
-          password: ${{ secrets.NCP_PASSWORD }}
-          port: ${{ secrets.NCP_PORT }}
-          source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-          target: "/root/jenkins/workspace/spring-batch"
+      # - uses: actions/checkout@v4
+      #   with:
+      #     script: cd batch 
+      # - name: copy file via ssh password
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.NCP_HOST }}
+      #     username: ${{ secrets.NCP_USERNAME }}
+      #     password: ${{ secrets.NCP_PASSWORD }}
+      #     port: ${{ secrets.NCP_PORT }}
+      #     source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+      #     target: "/root/jenkins/workspace/spring-batch"
           
     # # NCP 로그인 / docker image pull & run
     # - name: NCP login and docker image pull and run
