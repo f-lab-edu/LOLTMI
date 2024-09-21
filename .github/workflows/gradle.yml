@@ -92,6 +92,7 @@ jobs:
         host: ${{ secrets.NCP_HOST }}
         username: ${{ secrets.NCP_USERNAME }}
         key: ${{ secrets.NCP_KEY }}
+        port: ${{ secrets.NCP_PORT }}
         source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
         target: "/root/jenkins/workspace/spring-batch"
             
