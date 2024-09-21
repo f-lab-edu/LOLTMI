@@ -69,21 +69,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # NCP 로그인 / docker image pull & run
-    - name: NCP login and docker image pull and run
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
-        script: |
-          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          sudo docker stop $(sudo docker ps -a -q)
-          sudo docker rm -f $(sudo docker ps -a -q)
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-          sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-          sudo docker image prune -f
+    # # NCP 로그인 / docker image pull & run
+    # - name: NCP login and docker image pull and run
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.NCP_HOST }}
+    #     username: ${{ secrets.NCP_USERNAME }}
+    #     password: ${{ secrets.NCP_PASSWORD }}
+    #     port: ${{ secrets.NCP_PORT }}
+    #     script: |
+    #       sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    #       sudo docker stop $(sudo docker ps -a -q)
+    #       sudo docker rm -f $(sudo docker ps -a -q)
+    #       sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+    #       sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+    #       sudo docker image prune -f
           
     # - name: Batch Jar file SCP send
     #   run: |
@@ -98,13 +98,19 @@ jobs:
 
     - name: ls
       run: ls -al
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: ls
+      run: ls -al
       
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
-        source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-        target: "/root/jenkins/workspace/spring-batch"
+    # - name: copy file via ssh password
+    #   uses: appleboy/scp-action@v0.1.7
+    #   with:
+    #     host: ${{ secrets.NCP_HOST }}
+    #     username: ${{ secrets.NCP_USERNAME }}
+    #     password: ${{ secrets.NCP_PASSWORD }}
+    #     port: ${{ secrets.NCP_PORT }}
+    #     source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+    #     target: "/root/jenkins/workspace/spring-batch"
