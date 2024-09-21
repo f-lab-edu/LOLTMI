@@ -63,6 +63,7 @@ jobs:
     - name: DockerHub Push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
+    # batch.jar scp 전송
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.7
       with:
