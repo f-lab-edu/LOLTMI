@@ -98,6 +98,9 @@ jobs:
     #       scp -o StrictHostKeyChecking=no batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
             
     - name: Batch Jar file SCP send
-      run: scp -o StrictHostKeyChecking=no  batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
+      run: |
+        touch ./key.pem
+        echo "${{ secrets.NCP_KEY }}" > ./key.pem
+        scp -i ./key.pem batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
 
    
