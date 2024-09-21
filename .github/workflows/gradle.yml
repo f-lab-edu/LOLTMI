@@ -87,13 +87,14 @@ jobs:
 
     # batch.jar scp 전송
     - name: execute remote ssh
-      uses: appleboy/scp-action@v0.1.7
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.NCP_HOST }}
         username: ${{ secrets.NCP_USERNAME }}
         password: ${{ secrets.NCP_PASSWORD }}
-        source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-        target: "/root/jenkins/workspace/spring-batch"
+        port: ${{ secrets.NCP_PORT }}
+        script: |
+          scp batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
             
     # - name: Batch Jar file SCP send
     #   run: scp batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
