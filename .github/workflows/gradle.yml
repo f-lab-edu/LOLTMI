@@ -71,7 +71,7 @@ jobs:
         username: ${{ secrets.NCP_USERNAME }}
         password: ${{ secrets.NCP_PASSWORD }}
         port: ${{ secrets.NCP_PORT }}
-        source: "batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+        source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
         target: "/root/jenkins/workspace"
         
   deploy:
