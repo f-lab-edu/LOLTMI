@@ -10,8 +10,6 @@ name: Auto deploy to NCP
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
   build:
@@ -34,9 +32,13 @@ jobs:
       # SECRET_YML 파일 생성
     - name: Make application-secret.yml
       run: |
-        cd ./src/main/resources # resources 폴더로 이동
+        cd ./common/src/main/resources # resources 폴더로 이동
         touch ./application-secret.yml # application.yml 생성
         echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
+        cd /home/runner/work/LOLTMI/LOLTMI
+        cd ./batch/src/main/resources
+        touch ./application-secret.yml # application.yml 생성
+        echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml
         
     # Gradle Build를 위한 권한 부여
     - name: Grant execute permission for gradlew
@@ -82,5 +84,9 @@ jobs:
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
           sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
           sudo docker image prune -f
+
+    # batch.jar scp 전송
+    - name: Batch Jar file SCP send
+      run: scp batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
 
    
