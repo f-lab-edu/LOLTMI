@@ -101,7 +101,6 @@ jobs:
       run: |
         touch ./key.pem
         echo "${{ secrets.NCP_KEY }}" > ./key.pem
-        ls -al
-        scp -i ./key.pem batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
+        scp -i ./key.pem -o StrictHostKeyChecking=no batch/build/libs/batch-0.0.1-SNAPSHOT.jar root@211.188.48.13:/root/jenkins/workspace/spring-batch
 
    
