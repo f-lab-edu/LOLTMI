@@ -1,3 +1,4 @@
+/*
 package com.loltmi;
 
 import lombok.RequiredArgsConstructor;
@@ -38,4 +39,4 @@ public class SimpleJobConfiguration {
             return RepeatStatus.FINISHED;
         });
     }
-}
+}*/
