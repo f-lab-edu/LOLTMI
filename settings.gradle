@@ -2,3 +2,5 @@ rootProject.name = 'server'
 include 'api'
 include 'common'
 include 'batch'
+include 'live'
+
