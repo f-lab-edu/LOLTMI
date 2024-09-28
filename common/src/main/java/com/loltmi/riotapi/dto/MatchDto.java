@@ -389,6 +389,7 @@ public class MatchDto {
 
     public static Matches toMatch(MatchDto matchDto){
         return Matches.builder()
+                .id(matchDto.getMetadata().getMatchId())
                 .gameCreation(matchDto.getInfo().getGameCreation())
                 .gameDuration(matchDto.getInfo().getGameDuration())
                 .gameStartTimestamp(matchDto.getInfo().getGameStartTimestamp())
@@ -399,7 +400,7 @@ public class MatchDto {
                 .build();
     }
 
-    public static List<MatchExtra> toMatchExtra(MatchDto matchDto){
+    public static List<MatchExtra> toMatchExtra(MatchDto matchDto, Matches matches){
         List<MatchExtra> matchExtraList = new ArrayList<>();
         for (Info.ParticipantDto participant : matchDto.getInfo().getParticipants()) {
             matchExtraList.add(MatchExtra.builder()
@@ -427,7 +428,7 @@ public class MatchDto {
                     .summoner2Casts(participant.getSummoner2Casts())
                     .summoner2Id(participant.getSummoner2Id())
                     .win(participant.getWin())
-                    .matches(Matches.builder().id(matchDto.getMetadata().getMatchId()).build())
+                    .matches(matches)
                     .build());
         }
         return matchExtraList;
