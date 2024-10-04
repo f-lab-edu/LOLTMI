@@ -4,21 +4,25 @@ import com.loltmi.riotapi.entity.MatchExtra;
 import com.loltmi.riotapi.entity.Matches;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 public class MatchDto {
     private Metadata metadata;
     private Info info;
 
-    @Data
+    @Getter
     public class Metadata{
         private String dataVersion;
         private String matchId;
         private List<String> participants;
     }
 
-    @Data
+    @Getter
     public class Info{
         private String endOfGameResult;
         private Long gameCreation;
@@ -37,7 +41,7 @@ public class MatchDto {
         private List<TeamDto> teams;
         private String tournamentCode;
 
-        @Data
+        @Getter
         public static class ParticipantDto{
             private Integer allInPings;
             private Integer assistMePings;
@@ -183,7 +187,7 @@ public class MatchDto {
             private Integer wardsPlaced;
             private Boolean win;
 
-            @Data
+            @Getter
             public static class ChallengesDto{
                 //                    private Integer _12AssistStreakCount;
                 private Integer baronBuffGoldAdvantageOverThreshold;
@@ -333,7 +337,7 @@ public class MatchDto {
                 private Integer wardTakedownsBefore20M;
             }
 
-            @Data
+            @Getter
             public static class MissionsDto{
                 private Integer playerScore0;
                 private Integer playerScore1;
@@ -349,26 +353,26 @@ public class MatchDto {
                 private Integer playerScore11;
             }
 
-            @Data
+            @Getter
             public static class PerksDto{
 
             }
         }
 
-        @Data
+        @Getter
         public static class TeamDto{
             List<BanDto> bans;
             ObjectivesDto objectives;
             Integer teamId;
             Boolean win;
 
-            @Data
+            @Getter
             public static class BanDto{
                 private Integer championId;
                 private Integer pickTurn;
             }
 
-            @Data
+            @Getter
             public static class ObjectivesDto{
                 private ObjectiveDto baron;
                 private ObjectiveDto champion;
@@ -378,7 +382,7 @@ public class MatchDto {
                 private ObjectiveDto riftHerald;
                 private ObjectiveDto tower;
 
-                @Data
+                @Getter
                 public static class ObjectiveDto{
                     private Boolean first;
                     private Integer kills;
