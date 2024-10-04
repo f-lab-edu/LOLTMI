@@ -37,23 +37,23 @@ public class GetUserListJobConfig {
     @Bean
     public Job getUserListJob(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new JobBuilder("getUserList", jobRepository)
-            .start(getUserListStep(jobRepository, transactionManager))
+            .start(getUserListStep("tier", jobRepository, transactionManager))
             .incrementer(new RunIdIncrementer())
             .build();
     }
 
     ///////////// 마스터 유저 리스트 데이터베이스에 날짜별로 저장
     @Bean
-    public Step getUserListStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
+    @JobScope
+    public Step getUserListStep(@Value("#{jobParameters[tier]}") String tier, JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder("getUserListStep", jobRepository)
-            .tasklet(userListTasklet(null), transactionManager)
+            .tasklet(userListTasklet(tier), transactionManager)
             .allowStartIfComplete(true)
             .build();
     }
 
     @Bean
-    @StepScope
-    public Tasklet userListTasklet(@Value("#{jobParameters[tier]}") String tier){
+    public Tasklet userListTasklet(String tier){
         return ((contribution, chunkContext) -> {
 
             // 티어에 따른 리스트 가져오기
@@ -69,15 +69,18 @@ public class GetUserListJobConfig {
                 .retrieve()
                 .body(PlayerDto.class);
 
+            if (playerDto == null) throw new RuntimeException();
+
             log.info("유저수: {}", playerDto.getEntries().size());
 
             // 가져온 summonerId로 puuid 가져오기
             List<Player> players = new ArrayList<>();
-            int i = 1;
-            for(Entries entry : playerDto.getEntries()) {
+            int size = playerDto.getEntries().size();
+            for(int i=1; i<size; i++){
                 if(i%50==0) Thread.sleep(1000 * 60);
                 if(i%20==0) Thread.sleep(1000);
 
+                Entries entry = playerDto.getEntries().get(i);
                 SummonerDto summonerDto = restClient.get()
                     .uri(uriBuilder -> uriBuilder
                         .path(riotApiProperties.getUri().getPuuidBySummonerId())
@@ -86,6 +89,7 @@ public class GetUserListJobConfig {
                     .retrieve()
                     .body(SummonerDto.class);
 
+                if(summonerDto == null) throw new RuntimeException();
                 log.info("유저 puuid: {}", summonerDto.getPuuid());
 
                 Player player = Player.builder()
@@ -101,7 +105,6 @@ public class GetUserListJobConfig {
                     .build();
 
                 players.add(player);
-                i++;
             }
 
             playerRepository.saveAll(players);
