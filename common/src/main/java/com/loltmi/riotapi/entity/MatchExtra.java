@@ -1,5 +1,6 @@
 package com.loltmi.riotapi.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers.Base;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,40 +21,40 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MatchExtra {
+public class MatchExtra extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer allInPings;
-    private Integer assistMePings;
-    private Integer basicPings;
-    private Integer commandPings;
-    private Integer dangerPings;
-    private Integer enemyMissingPings;
-    private Integer enemyVisionPings;
-    private Integer getBackPings;
-    private Integer holdPings;
-    private Integer needVisionPings;
-    private Integer onMyWayPings;
-    private Integer pushPings;
-    private Integer visionClearedPings;
+    private int allInPings;
+    private int assistMePings;
+    private int basicPings;
+    private int commandPings;
+    private int dangerPings;
+    private int enemyMissingPings;
+    private int enemyVisionPings;
+    private int getBackPings;
+    private int holdPings;
+    private int needVisionPings;
+    private int onMyWayPings;
+    private int pushPings;
+    private int visionClearedPings;
 
-    private Integer controlWardsPlaced;
+    private int controlWardsPlaced;
 
-    private Integer visionWardsBoughtInGame;
-    private Integer wardsPlaced;
+    private int visionWardsBoughtInGame;
+    private int wardsPlaced;
 
-    private Integer firstTurretKilled;
+    private int firstTurretKilled;
     private Float firstTurretKilledTime;
 
-    private Integer initialCrabCount;
+    private int initialCrabCount;
 
-    private Integer summoner1Casts;
-    private Integer summoner1Id;
-    private Integer summoner2Casts;
-    private Integer summoner2Id;
+    private int summoner1Casts;
+    private int summoner1Id;
+    private int summoner2Casts;
+    private int summoner2Id;
 
     private Boolean win;
 
