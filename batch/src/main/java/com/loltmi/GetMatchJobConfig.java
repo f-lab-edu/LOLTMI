@@ -1,16 +1,13 @@
-/* reader-writer-processor 참고용
 package com.loltmi;
 
 import com.loltmi.riotapi.dto.MatchDto;
-import com.loltmi.riotapi.entity.MatchExtra;
+import com.loltmi.riotapi.property.RiotApiProperties;
 import com.loltmi.riotapi.repository.MatchExtraRepository;
 import com.loltmi.riotapi.repository.MatchRepository;
 import jakarta.persistence.EntityManagerFactory;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -20,58 +17,44 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
-import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.JpaCursorItemReader;
-import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.support.ListItemReader;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.RequestHeadersSpec;
-import org.springframework.web.util.UriBuilder;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class GetMatchIdListJobConfig {
-
-    public final String JOB_NAME = "GetMatchIdListBatch";
+public class GetMatchJobConfig {
+    private final RiotApiProperties riotApiProperties;
     private final EntityManagerFactory entityManagerFactory;
-    private final MatchExtraRepository matchExtraRepository;
-    private final MatchRepository matchRepository;
-    private Set<String> matchIdSet = new HashSet<>();
-    private static String RIOT_API_KEY = "RGAPI-527cf2a4-59c6-42cf-ba72-e0d9bf76e735";
-    private static String BASE_URL = "https://asia.api.riotgames.com";
-    private static String MATCH_LIST_URI = "/lol/match/v5/matches/by-puuid/{puuid}/ids";
-    private static String MATCH_URI = "/lol/match/v5/matches/{matchId}";
 
+    private final MatchRepository matchRepository;
+    private final MatchExtraRepository matchExtraRepository;
+
+    private static Set<String> matchIdset = new HashSet();
+    private int i=1;
+
+    //////////////////////// MatchIdList 받아오기
     @Bean
-    public Job job(JobRepository jobRepository, PlatformTransactionManager transactionManager){
-        return new JobBuilder("getMatchIdList", jobRepository)
-            .start(step1(jobRepository, transactionManager))
-            .next(step2(jobRepository, transactionManager))
+    public Job getMatchJob(JobRepository jobRepository, PlatformTransactionManager transactionManager){
+        return new JobBuilder("getMatchJob", jobRepository)
+            .start(getMatchStep(jobRepository, transactionManager))
+            .next(getMatchListStep(jobRepository, transactionManager))
             .incrementer(new RunIdIncrementer())
             .build();
     }
 
-    //////////////////////// MatchIdList 받아오기
     @Bean
-    public Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        System.out.println("step1 시작");
-        return new StepBuilder("step1", jobRepository)
-            .<String, List<String>>chunk(1, transactionManager)
+    public Step getMatchStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
+        log.info("getMatchStep 시작");
+        return new StepBuilder("getMatchStep", jobRepository)
+            .<String,List<String>>chunk(49, transactionManager)
             .reader(reader())
             .processor(processor())
             .writer(writer())
@@ -81,33 +64,36 @@ public class GetMatchIdListJobConfig {
 
     @Bean
     public JpaCursorItemReader<String> reader(){
-        System.out.println("reader1 시작");
+        log.info("reader1 시작");
         JpaCursorItemReader<String> reader = new JpaCursorItemReader<>();
         reader.setName("jpaCursorItemReader");
         reader.setEntityManagerFactory(entityManagerFactory);
-        reader.setQueryString("SELECT p.puuid FROM Player p");
+        reader.setQueryString("SELECT p.puuid FROM Player p where p.tier in ('challenger', 'grandmaster', 'master') and DATE(p.createdAt) = CURDATE()");
         return reader;
     }
 
     @Bean
     public ItemProcessor<String, List<String>> processor() {
         return puuid -> {
-            System.out.println("processor1 시작");
+            if(i%50==0) Thread.sleep(1000 * 60);
+            if(i%20==0) Thread.sleep(1000);
 
             RestClient restClient = RestClient.builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(riotApiProperties.getUri().getBaseAsia())
                 .build();
 
             List<String> matchIds = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                    .path(MATCH_LIST_URI)
+                    .path(riotApiProperties.getUri().getMatchList())
                     .queryParam("start", 0)
                     .queryParam("count", 20)
                     .queryParam("type", "ranked")
-                    .queryParam("api_key", RIOT_API_KEY)
+                    .queryParam("api_key", riotApiProperties.getApiKey())
                     .build(puuid))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
+
+            i++;
 
             return matchIds;
         };
@@ -116,18 +102,23 @@ public class GetMatchIdListJobConfig {
     @Bean
     public ItemWriter<List<String>> writer() {
         return chunk -> {
-            System.out.println("writer1 시작");
-            chunk.getItems().forEach(item -> item.forEach(System.out::println));
-            chunk.getItems().forEach(item -> item.forEach(s -> matchIdSet.add(s)));
+            log.info("writer1 시작");
+            chunk.getItems().forEach(item -> item.forEach(this::isAlreadyExists));
         };
+    }
+
+    private void isAlreadyExists(String matchId){
+        if(!matchRepository.existsById(matchId)) matchIdset.add(matchId);
     }
 
     ////////////////////////////////////Match Data 가져오기
     @Bean
-    public Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        System.out.println("step2 시작");
-        return new StepBuilder("step2", jobRepository)
-            .<String, MatchDto>chunk(1, transactionManager)
+    public Step getMatchListStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        log.info("getMatchListStep 시작");
+        log.info("matchIdSet.size() = {}", matchIdset.size());
+        i %= 50;
+        return new StepBuilder("getMatchListStep", jobRepository)
+            .<String, MatchDto>chunk(49, transactionManager)
             .reader(reader2())
             .processor(processor2())
             .writer(writer2())
@@ -139,24 +130,29 @@ public class GetMatchIdListJobConfig {
     @StepScope
     public ListItemReader<String> reader2(){
         System.out.println("reader2 시작");
-        return new ListItemReader<>(matchIdSet.stream().toList());
+        return new ListItemReader<>(matchIdset.stream().toList());
     }
 
     @Bean
     public ItemProcessor<String, MatchDto> processor2(){
         return matchId -> {
-            System.out.println("processor2 시작");
+            log.info("i: {}", i);
+            if(i%50==0) Thread.sleep(1000 * 60);
+            if(i%20==0) Thread.sleep(1000);
+
             RestClient restClient = RestClient.builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(riotApiProperties.getUri().getBaseAsia())
                 .build();
 
             MatchDto matchDto = restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                    .path(MATCH_URI)
-                    .queryParam("api_key", RIOT_API_KEY)
+                    .path(riotApiProperties.getUri().getMatchDetail())
+                    .queryParam("api_key", riotApiProperties.getApiKey())
                     .build(matchId))
                 .retrieve()
                 .body(MatchDto.class);
+
+            i++;
 
             return matchDto;
         };
@@ -165,8 +161,8 @@ public class GetMatchIdListJobConfig {
     public ItemWriter<MatchDto> writer2() {
         return chunk -> {
             System.out.println("writer2 시작");
-            chunk.getItems().forEach(item -> matchExtraRepository.saveAll(MatchDto.toMatchExtra(item, matchRepository.save(MatchDto.toMatch(item)))) );
+
+            chunk.getItems().forEach(matchDto -> matchExtraRepository.saveAll(MatchDto.toMatchExtra(matchDto, matchRepository.save(MatchDto.toMatch(matchDto)))) );
         };
     }
 }
-*/
