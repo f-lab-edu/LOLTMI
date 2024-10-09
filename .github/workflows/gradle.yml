@@ -90,11 +90,10 @@ jobs:
         password: ${{ secrets.NCP_PASSWORD }}
         port: ${{ secrets.NCP_PORT }}
         script: |
-          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          sudo docker stop $(sudo docker ps -a -q | grep -v -e 9a27a5ce91ef)
-          sudo docker rm -f $(sudo docker ps -a -q | grep -v -e 9a27a5ce91ef)
+          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }})
+          sudo docker rm -f loltmi-app
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-          sudo docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+          sudo docker run -d -p 8080:8080 --name loltmi-app ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
           # sudo docker image prune -f
    
 
