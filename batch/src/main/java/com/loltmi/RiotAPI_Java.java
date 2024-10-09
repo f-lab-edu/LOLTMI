@@ -1,4 +1,4 @@
-package com.loltmi.riotapi;
+package com.loltmi;
 
 import com.loltmi.riotapi.dto.MatchDto;
 import java.sql.Connection;
