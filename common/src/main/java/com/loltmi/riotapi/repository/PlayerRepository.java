@@ -13,6 +13,6 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     @Query("select p.puuid from Player p"
         + " where p.tier = :tier"
-        + " and DATE(p.createdAt) = CURDATE()")
+        + " and p.createdAt = CURDATE()")
     List<String> findByTier(@Param("tier") String tier);
 }

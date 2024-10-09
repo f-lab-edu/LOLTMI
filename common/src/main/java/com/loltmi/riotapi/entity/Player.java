@@ -1,5 +1,6 @@
 package com.loltmi.riotapi.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -27,9 +29,12 @@ public class Player extends BaseEntity {
 
     private String tier;
     private String ranks;
-    private Integer leaguePoints;
-    private Integer wins;
-    private Integer losses;
+    @ColumnDefault("-1")
+    private int leaguePoints;
+    @ColumnDefault("-1")
+    private int wins;
+    @ColumnDefault("-1")
+    private int losses;
 
     public void changePuuid(String puuid){
         this.puuid = puuid;

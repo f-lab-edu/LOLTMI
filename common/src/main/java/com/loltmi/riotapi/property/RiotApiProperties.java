@@ -11,21 +11,21 @@ import org.springframework.context.annotation.Configuration;
 
 @ConfigurationProperties(prefix = "riot")
 @Getter
-@Setter
+@RequiredArgsConstructor
 public class RiotApiProperties {
 
-    private String apiKey;
-    private UriProperties uri;
+    private final String apiKey;
+    private final UriProperties uri;
 
     @Getter
-    @Setter
+    @RequiredArgsConstructor
     public static class UriProperties{
-        private String baseKr;
-        private String baseAsia;
-        private String highLevelTierList;
-        private String otherTierList;
-        private String puuidBySummonerId;
-        private String matchList;
-        private String matchDetail;
+        private final String baseKr;
+        private final String baseAsia;
+        private final String highLevelTierList;
+        private final String otherTierList;
+        private final String puuidBySummonerId;
+        private final String matchList;
+        private final String matchDetail;
     }
 }

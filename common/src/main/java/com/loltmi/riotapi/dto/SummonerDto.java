@@ -1,8 +1,9 @@
 package com.loltmi.riotapi.dto;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class SummonerDto {
 
     private String id;

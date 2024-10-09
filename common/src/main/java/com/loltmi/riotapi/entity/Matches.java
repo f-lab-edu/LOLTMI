@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Matches {
+public class Matches extends BaseEntity{
 
     @Id
     private String id;
-    private Long gameCreation;
-    private Long gameDuration;
-    private Long gameStartTimestamp;
-    private Long gameEndTimestamp;
+    private long gameCreation;
+    private long gameDuration;
+    private long gameStartTimestamp;
+    private long gameEndTimestamp;
     private String gameMode;
     private String gameVersion;
-    private Integer mapId;
+    private int mapId;
 }
