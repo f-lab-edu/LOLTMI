@@ -33,8 +33,8 @@ jobs:
     - name: Make application-secret.yml
       run: |
         cd ./common/src/main/resources # resources 폴더로 이동
-        touch ./application-secret.yml # application.yml 생성
-        echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
+        touch ./application-common.yaml # application.yml 생성
+        echo "${{ secrets.COMMON_YML }}" > ./application-common.yaml
 
         cd /home/runner/work/LOLTMI/LOLTMI
         cd ./batch/src/main/resources
