@@ -44,8 +44,7 @@ public class GetUserListJobConfig {
 
     ///////////// 마스터 유저 리스트 데이터베이스에 날짜별로 저장
     @Bean
-    @JobScope
-    public Step getUserListStep(@Value("#{jobParameters[tier]}") String tier, JobRepository jobRepository, PlatformTransactionManager transactionManager){
+    public Step getUserListStep(String tier, JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new StepBuilder("getUserListStep", jobRepository)
             .tasklet(userListTasklet(tier), transactionManager)
             .allowStartIfComplete(true)
@@ -53,7 +52,8 @@ public class GetUserListJobConfig {
     }
 
     @Bean
-    public Tasklet userListTasklet(String tier){
+    @StepScope
+    public Tasklet userListTasklet(@Value("#{jobParameters[tier]}") String tier){
         return ((contribution, chunkContext) -> {
 
             // 티어에 따른 리스트 가져오기
@@ -69,7 +69,7 @@ public class GetUserListJobConfig {
                 .retrieve()
                 .body(PlayerDto.class);
 
-            if (playerDto == null) throw new RuntimeException();
+            if (playerDto == null) throw new RuntimeException("playerDto가 null입니다");
 
             log.info("유저수: {}", playerDto.getEntries().size());
 
@@ -89,7 +89,7 @@ public class GetUserListJobConfig {
                     .retrieve()
                     .body(SummonerDto.class);
 
-                if(summonerDto == null) throw new RuntimeException();
+                if(summonerDto == null) throw new RuntimeException("summonerDto가 null입니다");
                 log.info("유저 puuid: {}", summonerDto.getPuuid());
 
                 Player player = Player.builder()
