@@ -1,7 +1,9 @@
 package com.loltmi.riotapi.dto;
 
+import com.loltmi.riotapi.dto.MatchDto.Info.TeamDto;
 import com.loltmi.riotapi.entity.MatchExtra;
 import com.loltmi.riotapi.entity.Matches;
+import com.loltmi.riotapi.entity.Teams;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -101,7 +103,6 @@ public class MatchDto {
             private Integer magicDamageDealt;
             private Integer magicDamageDealtToChampions;
             private Integer magicDamageTaken;
-            private MissionsDto missions;
             private Integer neutralMinionsKilled;
             private Integer needVisionPings;
             private Integer nexusKills;
@@ -124,7 +125,6 @@ public class MatchDto {
             private Integer playerScore10;
             private Integer playerScore11;
             private Integer pentaKills;
-            //                private PerksDto perks;
             private Integer physicalDamageDealt;
             private Integer physicalDamageDealtToChampions;
             private Integer physicalDamageTaken;
@@ -189,7 +189,6 @@ public class MatchDto {
 
             @Getter
             public static class ChallengesDto{
-                //                    private Integer _12AssistStreakCount;
                 private Integer baronBuffGoldAdvantageOverThreshold;
                 private Float controlWardTimeCoverageInRiverOrEnemyHalf;
                 private Integer earliestBaron;
@@ -299,16 +298,6 @@ public class MatchDto {
                 private Integer skillshotsHit;
                 private Integer snowballsHit;
                 private Integer soloBaronKills;
-                private Integer SWARM_DefeatAatrox;
-                private Integer SWARM_DefeatBriar;
-                private Integer SWARM_DefeatMiniBosses;
-                private Integer SWARM_EvolveWeapon;
-                private Integer SWARM_Have3Passives;
-                private Integer SWARM_KillEnemy;
-                private Float SWARM_PickupGold;
-                private Integer SWARM_ReachLevel50;
-                private Integer SWARM_Survive15Min;
-                private Integer SWARM_WinWith5EvolvedWeapons;
                 private Integer soloKills;
                 private Integer stealthWardsPlaced;
                 private Integer survivedSingleDigitHpCount;
@@ -335,27 +324,6 @@ public class MatchDto {
                 private Integer wardsGuarded;
                 private Integer wardTakedowns;
                 private Integer wardTakedownsBefore20M;
-            }
-
-            @Getter
-            public static class MissionsDto{
-                private Integer playerScore0;
-                private Integer playerScore1;
-                private Integer playerScore2;
-                private Integer playerScore3;
-                private Integer playerScore4;
-                private Integer playerScore5;
-                private Integer playerScore6;
-                private Integer playerScore7;
-                private Integer playerScore8;
-                private Integer playerScore9;
-                private Integer playerScore10;
-                private Integer playerScore11;
-            }
-
-            @Getter
-            public static class PerksDto{
-
             }
         }
 
@@ -408,33 +376,297 @@ public class MatchDto {
         List<MatchExtra> matchExtraList = new ArrayList<>();
         for (Info.ParticipantDto participant : matchDto.getInfo().getParticipants()) {
             matchExtraList.add(MatchExtra.builder()
-                    .allInPings(participant.getAllInPings())
-                    .assistMePings(participant.getAssistMePings())
-                    .basicPings(participant.getBasicPings())
-                    .commandPings(participant.getCommandPings())
-                    .dangerPings(participant.getDangerPings())
-                    .enemyMissingPings(participant.getEnemyMissingPings())
-                    .enemyVisionPings(participant.getEnemyVisionPings())
-                    .getBackPings(participant.getGetBackPings())
-                    .holdPings(participant.getHoldPings())
-                    .needVisionPings(participant.getNeedVisionPings())
-                    .onMyWayPings(participant.getOnMyWayPings())
-                    .pushPings(participant.getPushPings())
-                    .visionClearedPings(participant.getVisionClearedPings())
-                    .controlWardsPlaced(participant.getChallenges().getControlWardsPlaced())
-                    .visionWardsBoughtInGame(participant.getVisionWardsBoughtInGame())
-                    .wardsPlaced(participant.getWardsPlaced())
-                    .firstTurretKilled(participant.getChallenges().getFirstTurretKilled())
-                    .firstTurretKilledTime(participant.getChallenges().getFirstTurretKilledTime())
-                    .initialCrabCount(participant.getChallenges().getInitialCrabCount())
-                    .summoner1Casts(participant.getSummoner1Casts())
-                    .summoner1Id(participant.getSummoner1Id())
-                    .summoner2Casts(participant.getSummoner2Casts())
-                    .summoner2Id(participant.getSummoner2Id())
-                    .win(participant.getWin())
-                    .matches(matches)
-                    .build());
+                .allInPings(participant.getAllInPings())
+                .assistMePings(participant.getAssistMePings())
+                .basicPings(participant.getBasicPings())
+                .commandPings(participant.getCommandPings())
+                .dangerPings(participant.getDangerPings())
+                .enemyMissingPings(participant.getEnemyMissingPings())
+                .enemyVisionPings(participant.getEnemyVisionPings())
+                .getBackPings(participant.getGetBackPings())
+                .holdPings(participant.getHoldPings())
+                .needVisionPings(participant.getNeedVisionPings())
+                .onMyWayPings(participant.getOnMyWayPings())
+                .pushPings(participant.getPushPings())
+                .visionClearedPings(participant.getVisionClearedPings())
+                .controlWardsPlaced(participant.getChallenges().getControlWardsPlaced())
+                .visionWardsBoughtInGame(participant.getVisionWardsBoughtInGame())
+                .wardsPlaced(participant.getWardsPlaced())
+                .firstTurretKilled(participant.getChallenges().getFirstTurretKilled())
+                .firstTurretKilledTime(participant.getChallenges().getFirstTurretKilledTime())
+                .initialCrabCount(participant.getChallenges().getInitialCrabCount())
+                .summoner1Casts(participant.getSummoner1Casts())
+                .summoner1Id(participant.getSummoner1Id())
+                .summoner2Casts(participant.getSummoner2Casts())
+                .summoner2Id(participant.getSummoner2Id())
+                .win(participant.getWin())
+                .matches(matches)
+                .assists(participant.getAssists())
+                .baronKills(participant.getBaronKills())
+                .bountyLevel(participant.getBountyLevel())
+                .champExperience(participant.getChampExperience())
+                .champLevel(participant.getChampLevel())
+                .championId(participant.getChampionId())
+                .championName(participant.getChampionName())
+                .championTransform(participant.getChampionTransform()) // Kayn's transfo
+                .consumablesPurchased(participant.getConsumablesPurchased())
+                .baronBuffGoldAdvantageOverThreshold(participant.getChallenges().getBaronBuffGoldAdvantageOverThreshold())
+                .controlWardTimeCoverageInRiverOrEnemyHalf(participant.getChallenges().getControlWardTimeCoverageInRiverOrEnemyHalf())
+                .earliestBaron(participant.getChallenges().getEarliestBaron())
+                .earliestDragonTakedown(participant.getChallenges().getEarliestDragonTakedown())
+                .earliestElderDragon(participant.getChallenges().getEarliestElderDragon())
+                .earlyLaningPhaseGoldExpAdvantage(participant.getChallenges().getEarlyLaningPhaseGoldExpAdvantage())
+                .fasterSupportQuestCompletion(participant.getChallenges().getFasterSupportQuestCompletion())
+                .fastestLegendary(participant.getChallenges().getFastestLegendary())
+                .hadAfkTeammate(participant.getChallenges().getHadAfkTeammate())
+                .highestChampionDamage(participant.getChallenges().getHighestChampionDamage())
+                .highestCrowdControlScore(participant.getChallenges().getHighestCrowdControlScore())
+                .highestWardKills(participant.getChallenges().getHighestWardKills())
+                .junglerKillsEarlyJungle(participant.getChallenges().getJunglerKillsEarlyJungle())
+                .killsOnLanersEarlyJungleAsJungler(participant.getChallenges().getKillsOnLanersEarlyJungleAsJungler())
+                .laningPhaseGoldExpAdvantage(participant.getChallenges().getLaningPhaseGoldExpAdvantage())
+                .legendaryCount(participant.getChallenges().getLegendaryCount())
+                .maxCsAdvantageOnLaneOpponent(participant.getChallenges().getMaxCsAdvantageOnLaneOpponent())
+                .maxLevelLeadLaneOpponent(participant.getChallenges().getMaxLevelLeadLaneOpponent())
+                .mostWardsDestroyedOneSweeper(participant.getChallenges().getMostWardsDestroyedOneSweeper())
+                .mythicItemUsed(participant.getChallenges().getMythicItemUsed())
+                .playedChampSelectPosition(participant.getChallenges().getPlayedChampSelectPosition())
+                .soloTurretsLategame(participant.getChallenges().getSoloTurretsLategame())
+                .takedownsFirst25Minutes(participant.getChallenges().getTakedownsFirst25Minutes())
+                .teleportTakedowns(participant.getChallenges().getTeleportTakedowns())
+                .thirdInhibitorDestroyedTime(participant.getChallenges().getThirdInhibitorDestroyedTime())
+                .threeWardsOneSweeperCount(participant.getChallenges().getThreeWardsOneSweeperCount())
+                .visionScoreAdvantageLaneOpponent(participant.getChallenges().getVisionScoreAdvantageLaneOpponent())
+                .InfernalScalePickup(participant.getChallenges().getInfernalScalePickup())
+                .fistBumpParticipation(participant.getChallenges().getFistBumpParticipation())
+                .voidMonsterKill(participant.getChallenges().getVoidMonsterKill())
+                .abilityUses(participant.getChallenges().getAbilityUses())
+                .acesBefore15Minutes(participant.getChallenges().getAcesBefore15Minutes())
+                .alliedJungleMonsterKills(participant.getChallenges().getAlliedJungleMonsterKills())
+                .baronTakedowns(participant.getChallenges().getBaronTakedowns())
+                .blastConeOppositeOpponentCount(participant.getChallenges().getBlastConeOppositeOpponentCount())
+                .bountyGold(participant.getChallenges().getBountyGold())
+                .buffsStolen(participant.getChallenges().getBuffsStolen())
+                .completeSupportQuestInTime(participant.getChallenges().getCompleteSupportQuestInTime())
+                .damagePerMinute(participant.getChallenges().getDamagePerMinute())
+                .damageTakenOnTeamPercentage(participant.getChallenges().getDamageTakenOnTeamPercentage())
+                .dancedWithRiftHerald(participant.getChallenges().getDancedWithRiftHerald())
+                .deathsByEnemyChamps(participant.getChallenges().getDeathsByEnemyChamps())
+                .dodgeSkillShotsSmallWindow(participant.getChallenges().getDodgeSkillShotsSmallWindow())
+                .doubleAces(participant.getChallenges().getDoubleAces())
+                .dragonTakedowns(participant.getChallenges().getDragonTakedowns())
+                .effectiveHealAndShielding(participant.getChallenges().getEffectiveHealAndShielding())
+                .elderDragonKillsWithOpposingSoul(participant.getChallenges().getElderDragonKillsWithOpposingSoul())
+                .elderDragonMultikills(participant.getChallenges().getElderDragonMultikills())
+                .enemyChampionImmobilizations(participant.getChallenges().getEnemyChampionImmobilizations())
+                .enemyJungleMonsterKills(participant.getChallenges().getEnemyJungleMonsterKills())
+                .epicMonsterKillsNearEnemyJungler(participant.getChallenges().getEpicMonsterKillsNearEnemyJungler())
+                .epicMonsterKillsWithin30SecondsOfSpawn(participant.getChallenges().getEpicMonsterKillsWithin30SecondsOfSpawn())
+                .epicMonsterSteals(participant.getChallenges().getEpicMonsterSteals())
+                .epicMonsterStolenWithoutSmite(participant.getChallenges().getEpicMonsterStolenWithoutSmite())
+                .flawlessAces(participant.getChallenges().getFlawlessAces())
+                .fullTeamTakedown(participant.getChallenges().getFullTeamTakedown())
+                .gameLength(participant.getChallenges().getGameLength())
+                .getTakedownsInAllLanesEarlyJungleAsLaner(participant.getChallenges().getGetTakedownsInAllLanesEarlyJungleAsLaner())
+                .goldPerMinute(participant.getChallenges().getGoldPerMinute())
+                .hadOpenNexus(participant.getChallenges().getHadOpenNexus())
+                .immobilizeAndKillWithAlly(participant.getChallenges().getImmobilizeAndKillWithAlly())
+                .initialBuffCount(participant.getChallenges().getInitialBuffCount())
+                .jungleCsBefore10Minutes(participant.getChallenges().getJungleCsBefore10Minutes())
+                .junglerTakedownsNearDamagedEpicMonster(participant.getChallenges().getJunglerTakedownsNearDamagedEpicMonster())
+                .kda(participant.getChallenges().getKda())
+                .killAfterHiddenWithAlly(participant.getChallenges().getKillAfterHiddenWithAlly())
+                .killedChampTookFullTeamDamageSurvived(participant.getChallenges().getKilledChampTookFullTeamDamageSurvived())
+                .killingSprees(participant.getChallenges().getKillingSprees())
+                .killParticipation(participant.getChallenges().getKillParticipation())
+                .killsNearEnemyTurret(participant.getChallenges().getKillsNearEnemyTurret())
+                .killsOnOtherLanesEarlyJungleAsLaner(participant.getChallenges().getKillsOnOtherLanesEarlyJungleAsLaner())
+                .killsOnRecentlyHealedByAramPack(participant.getChallenges().getKillsOnRecentlyHealedByAramPack())
+                .killsUnderOwnTurret(participant.getChallenges().getKillsUnderOwnTurret())
+                .killsWithHelpFromEpicMonster(participant.getChallenges().getKillsWithHelpFromEpicMonster())
+                .knockEnemyIntoTeamAndKill(participant.getChallenges().getKnockEnemyIntoTeamAndKill())
+                .kTurretsDestroyedBeforePlatesFall(participant.getChallenges().getKTurretsDestroyedBeforePlatesFall())
+                .landSkillShotsEarlyGame(participant.getChallenges().getLandSkillShotsEarlyGame())
+                .laneMinionsFirst10Minutes(participant.getChallenges().getLaneMinionsFirst10Minutes())
+                .lostAnInhibitor(participant.getChallenges().getLostAnInhibitor())
+                .maxKillDeficit(participant.getChallenges().getMaxKillDeficit())
+                .mejaisFullStackInTime(participant.getChallenges().getMejaisFullStackInTime())
+                .moreEnemyJungleThanOpponent(participant.getChallenges().getMoreEnemyJungleThanOpponent())
+                .multiKillOneSpell(participant.getChallenges().getMultiKillOneSpell())
+                .multikills(participant.getChallenges().getMultikills())
+                .multikillsAfterAggressiveFlash(participant.getChallenges().getMultikillsAfterAggressiveFlash())
+                .multiTurretRiftHeraldCount(participant.getChallenges().getMultiTurretRiftHeraldCount())
+                .outerTurretExecutesBefore10Minutes(participant.getChallenges().getOuterTurretExecutesBefore10Minutes())
+                .outnumberedKills(participant.getChallenges().getOutnumberedKills())
+                .outnumberedNexusKill(participant.getChallenges().getOutnumberedNexusKill())
+                .perfectDragonSoulsTaken(participant.getChallenges().getPerfectDragonSoulsTaken())
+                .perfectGame(participant.getChallenges().getPerfectGame())
+                .pickKillWithAlly(participant.getChallenges().getPickKillWithAlly())
+                .poroExplosions(participant.getChallenges().getPoroExplosions())
+                .quickCleanse(participant.getChallenges().getQuickCleanse())
+                .quickFirstTurret(participant.getChallenges().getQuickFirstTurret())
+                .quickSoloKills(participant.getChallenges().getQuickSoloKills())
+                .riftHeraldTakedowns(participant.getChallenges().getRiftHeraldTakedowns())
+                .saveAllyFromDeath(participant.getChallenges().getSaveAllyFromDeath())
+                .scuttleCrabKills(participant.getChallenges().getScuttleCrabKills())
+                .shortestTimeToAceFromFirstTakedown(participant.getChallenges().getShortestTimeToAceFromFirstTakedown())
+                .skillshotsDodged(participant.getChallenges().getSkillshotsDodged())
+                .skillshotsHit(participant.getChallenges().getSkillshotsHit())
+                .snowballsHit(participant.getChallenges().getSnowballsHit())
+                .soloBaronKills(participant.getChallenges().getSoloBaronKills())
+                .soloKills(participant.getChallenges().getSoloKills())
+                .stealthWardsPlaced(participant.getChallenges().getStealthWardsPlaced())
+                .survivedSingleDigitHpCount(participant.getChallenges().getSurvivedSingleDigitHpCount())
+                .survivedThreeImmobilizesInFight(participant.getChallenges().getSurvivedThreeImmobilizesInFight())
+                .takedownOnFirstTurret(participant.getChallenges().getTakedownOnFirstTurret())
+                .takedowns(participant.getChallenges().getTakedowns())
+                .takedownsAfterGainingLevelAdvantage(participant.getChallenges().getTakedownsAfterGainingLevelAdvantage())
+                .takedownsBeforeJungleMinionSpawn(participant.getChallenges().getTakedownsBeforeJungleMinionSpawn())
+                .takedownsFirstXMinutes(participant.getChallenges().getTakedownsFirstXMinutes())
+                .takedownsInAlcove(participant.getChallenges().getTakedownsInAlcove())
+                .takedownsInEnemyFountain(participant.getChallenges().getTakedownsInEnemyFountain())
+                .teamBaronKills(participant.getChallenges().getTeamBaronKills())
+                .teamDamagePercentage(participant.getChallenges().getTeamDamagePercentage())
+                .teamElderDragonKills(participant.getChallenges().getTeamElderDragonKills())
+                .teamRiftHeraldKills(participant.getChallenges().getTeamRiftHeraldKills())
+                .tookLargeDamageSurvived(participant.getChallenges().getTookLargeDamageSurvived())
+                .turretPlatesTaken(participant.getChallenges().getTurretPlatesTaken())
+                .turretsTakenWithRiftHerald(participant.getChallenges().getTurretsTakenWithRiftHerald())
+                .turretTakedowns(participant.getChallenges().getTurretTakedowns())
+                .twentyMinionsIn3SecondsCount(participant.getChallenges().getTwentyMinionsIn3SecondsCount())
+                .twoWardsOneSweeperCount(participant.getChallenges().getTwoWardsOneSweeperCount())
+                .unseenRecalls(participant.getChallenges().getUnseenRecalls())
+                .visionScorePerMinute(participant.getChallenges().getVisionScorePerMinute())
+                .wardsGuarded(participant.getChallenges().getWardsGuarded())
+                .wardTakedowns(participant.getChallenges().getWardTakedowns())
+                .wardTakedownsBefore20M(participant.getChallenges().getWardTakedownsBefore20M())
+                // challengerDto
+                .damageDealtToBuildings(participant.getDamageDealtToBuildings())
+                .damageDealtToObjectives(participant.getDamageDealtToObjectives())
+                .damageDealtToTurrets(participant.getDamageDealtToTurrets())
+                .damageSelfMitigated(participant.getDamageSelfMitigated())
+                .deaths(participant.getDeaths())
+                .detectorWardsPlaced(participant.getDetectorWardsPlaced())
+                .doubleKills(participant.getDoubleKills())
+                .dragonKills(participant.getDragonKills())
+                .eligibleForProgression(participant.getEligibleForProgression())
+                .firstBloodAssist(participant.getFirstBloodAssist())
+                .firstBloodKill(participant.getFirstBloodKill())
+                .firstTowerAssist(participant.getFirstTowerAssist())
+                .firstTowerKill(participant.getFirstTowerKill())
+                .gameEndedInEarlySurrender(participant.getGameEndedInSurrender())
+                .gameEndedInSurrender(participant.getGameEndedInSurrender())
+                .goldEarned(participant.getGoldEarned())
+                .goldSpent(participant.getGoldSpent())
+                .individualPosition(participant.getIndividualPosition())
+                .inhibitorKills(participant.getInhibitorKills())
+                .inhibitorTakedowns(participant.getInhibitorTakedowns())
+                .inhibitorsLost(participant.getInhibitorsLost())
+                .item0(participant.getItem0())
+                .item1(participant.getItem1())
+                .item2(participant.getItem2())
+                .item3(participant.getItem3())
+                .item4(participant.getItem4())
+                .item5(participant.getItem5())
+                .item6(participant.getItem6())
+                .itemsPurchased(participant.getItemsPurchased())
+                .kills(participant.getKills())
+                .lane(participant.getLane())
+                .largestCriticalStrike(participant.getLargestCriticalStrike())
+                .largestKillingSpree(participant.getLargestKillingSpree())
+                .largestMultiKill(participant.getLargestMultiKill())
+                .longestTimeSpentLiving(participant.getLongestTimeSpentLiving())
+                .magicDamageDealt(participant.getMagicDamageDealt())
+                .magicDamageDealtToChampions(participant.getMagicDamageDealtToChampions())
+                .magicDamageTaken(participant.getMagicDamageTaken())
+                .neutralMinionsKilled(participant.getNeutralMinionsKilled())
+                .nexusKills(participant.getNexusKills())
+                .nexusTakedowns(participant.getNexusTakedowns())
+                .nexusLost(participant.getNexusLost())
+                .objectivesStolen(participant.getObjectivesStolen())
+                .objectivesStolenAssists(participant.getObjectivesStolenAssists())
+                .pentaKills(participant.getPentaKills())
+                .physicalDamageDealt(participant.getPhysicalDamageDealt())
+                .physicalDamageDealtToChampions(participant.getPhysicalDamageDealtToChampions())
+                .physicalDamageTaken(participant.getPhysicalDamageTaken())
+                .placement(participant.getPlacement())
+                .profileIcon(participant.getProfileIcon())
+                .puuid(participant.getPuuid())
+                .quadraKills(participant.getQuadraKills())
+                .riotIdGameName(participant.getRiotIdGameName())
+                .riotIdName(participant.getRiotIdName())
+                .riotIdTagline(participant.getRiotIdTagline())
+                .role(participant.getRole())
+                .sightWardsBoughtInGame(participant.getSightWardsBoughtInGame())
+                .spell1Casts(participant.getSpell1Casts())
+                .spell2Casts(participant.getSpell2Casts())
+                .spell3Casts(participant.getSpell3Casts())
+                .spell4Casts(participant.getSpell4Casts())
+                .summonerId(participant.getSummonerId())
+                .summonerLevel(participant.getSummonerLevel())
+                .summonerName(participant.getSummonerName())
+                .teamEarlySurrendered(participant.getTeamEarlySurrendered())
+                .teamId(participant.getTeamId())
+                .teamPosition(participant.getTeamPosition())
+                .timeCCingOthers(participant.getTimeCCingOthers())
+                .timePlayed(participant.getTimePlayed())
+                .totalAllyJungleMinionsKilled(participant.getTotalAllyJungleMinionsKilled())
+                .totalDamageDealt(participant.getTotalDamageDealt())
+                .totalDamageDealtToChampions(participant.getTotalDamageDealtToChampions())
+                .totalDamageShieldedOnTeammates(participant.getTotalDamageShieldedOnTeammates())
+                .totalDamageTaken(participant.getTotalDamageTaken())
+                .totalEnemyJungleMinionsKilled(participant.getTotalEnemyJungleMinionsKilled())
+                .totalHealsOnTeammates(participant.getTotalHealsOnTeammates())
+                .totalMinionsKilled(participant.getTotalMinionsKilled())
+                .totalTimeCCDealt(participant.getTotalTimeCCDealt())
+                .totalTimeSpentDead(participant.getTotalTimeSpentDead())
+                .totalUnitsHealed(participant.getTotalUnitsHealed())
+                .tripleKills(participant.getTripleKills())
+                .trueDamageDealt(participant.getTrueDamageDealt())
+                .trueDamageDealtToChampions(participant.getTrueDamageDealtToChampions())
+                .trueDamageTaken(participant.getTrueDamageTaken())
+                .turretKills(participant.getTurretKills())
+                .turretsLost(participant.getTurretsLost())
+                .unrealKills(participant.getUnrealKills())
+                .visionScore(participant.getVisionScore())
+                .wardsKilled(participant.getWardsKilled())
+                .build());
+
         }
         return matchExtraList;
+    }
+
+    public static List<Teams> toTeams(MatchDto matchDto, Matches matches){
+        List<Teams> teams = new ArrayList<>();
+        for (TeamDto teamDto : matchDto.getInfo().getTeams()) {
+            Teams team = Teams.builder()
+                .bansChampionId1(teamDto.getBans().get(0).getChampionId())
+                .bansChampionId2(teamDto.getBans().get(1).getChampionId())
+                .bansChampionId3(teamDto.getBans().get(2).getChampionId())
+                .bansChampionId4(teamDto.getBans().get(3).getChampionId())
+                .bansChampionId5(teamDto.getBans().get(4).getChampionId())
+                .baronFirst(teamDto.getObjectives().getBaron().getFirst())
+                .baronKills(teamDto.getObjectives().getBaron().getKills())
+                .championFirst(teamDto.getObjectives().getChampion().getFirst())
+                .championKills(teamDto.getObjectives().getChampion().getKills())
+                .dragonFirst(teamDto.getObjectives().getDragon().getFirst())
+                .dragonKills(teamDto.getObjectives().getDragon().getKills())
+                .hordeFirst(teamDto.getObjectives().getHorde().getFirst())
+                .hordeKills(teamDto.getObjectives().getHorde().getKills())
+                .inhibitorFirst(teamDto.getObjectives().getInhibitor().getFirst())
+                .inhibitorKills(teamDto.getObjectives().getInhibitor().getKills())
+                .riftHeraldFirst(teamDto.getObjectives().getRiftHerald().getFirst())
+                .riftHeraldKills(teamDto.getObjectives().getRiftHerald().getKills())
+                .towerFirst(teamDto.getObjectives().getTower().getFirst())
+                .towerKills(teamDto.getObjectives().getTower().getKills())
+                .teamId(teamDto.getTeamId())
+                .win(teamDto.getWin())
+                .matches(matches)
+                .build();
+
+            teams.add(team);
+        }
+
+        return teams;
     }
 }
