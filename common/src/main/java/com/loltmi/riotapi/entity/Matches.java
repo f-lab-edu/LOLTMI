@@ -17,11 +17,11 @@ public class Matches extends BaseEntity{
 
     @Id
     private String id;
-    private long gameCreation;
-    private long gameDuration;
-    private long gameStartTimestamp;
-    private long gameEndTimestamp;
+    private Long gameCreation;
+    private Long gameDuration;
+    private Long gameStartTimestamp;
+    private Long gameEndTimestamp;
     private String gameMode;
     private String gameVersion;
-    private int mapId;
+    private Integer mapId;
 }

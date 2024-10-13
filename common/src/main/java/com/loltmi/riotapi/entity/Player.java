@@ -24,17 +24,14 @@ public class Player extends BaseEntity {
 
     private String puuid;
     private String summonerId;
-    private int profileIconId;
-    private long summonerLevel;
+    private Integer profileIconId;
+    private Long summonerLevel;
 
     private String tier;
     private String ranks;
-    @ColumnDefault("-1")
-    private int leaguePoints;
-    @ColumnDefault("-1")
-    private int wins;
-    @ColumnDefault("-1")
-    private int losses;
+    private Integer leaguePoints;
+    private Integer wins;
+    private Integer losses;
 
     public void changePuuid(String puuid){
         this.puuid = puuid;
