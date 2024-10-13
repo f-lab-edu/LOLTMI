@@ -39,7 +39,9 @@ jobs:
         cd /home/runner/work/LOLTMI/LOLTMI
         cd ./batch/src/main/resources
         touch ./application-secret.yml # application.yml 생성
-        echo "${{ secrets.SECRET_YML_BATCH }}" > ./application-secret.yml
+        echo "${SECRET_YML_BATCH}" > ./application-secret.yml
+      env:
+        SECRET_YML_BATCH: ${{ secrets.SECRET_YML_BATCH }}
         
     # Gradle Build를 위한 권한 부여
     - name: Grant execute permission for gradlew
