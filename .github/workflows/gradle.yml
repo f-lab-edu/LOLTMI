@@ -88,10 +88,9 @@ jobs:
     - name: NCP login and docker image pull and run
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
+        host: ${{ secrets.AWS_HOST }}
+        username: ${{ secrets.AWS_USERNAME }}
+        key: ${{ secrets.AWS_KEY }}
         script: |
           sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker rm -f loltmi-app
