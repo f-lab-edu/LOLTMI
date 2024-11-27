@@ -1,3 +1,6 @@
+version: "1"
+
+services:
   node_exporter:
     image: prom/node-exporter
     container_name: node-exporter
