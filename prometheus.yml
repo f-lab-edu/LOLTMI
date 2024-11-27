@@ -17,6 +17,6 @@ scrape_configs:
     scheme: 'http'
 
     static_configs:
-      - targets: ['prometheus:9090', 'node_exporter:9100', 'cadvisor:9200']
+      - targets: ['prometheus:9090', 'node_exporter:9100', 'cadvisor:8080']
         labels:
           service: 'monitor'
