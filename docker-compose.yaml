@@ -22,7 +22,7 @@ services:
     image: gcr.io/cadvisor/cadvisor
     container_name: cadvisor
     ports:
-      - 9200:8080
+      - 9200:9200
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
