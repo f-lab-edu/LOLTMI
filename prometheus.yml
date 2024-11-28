@@ -1,20 +1,13 @@
 global:
   scrape_interval: 10s
   scrape_timeout: 10s
-  evaluation_interval: 1m
 
   external_labels:
-    monitor: 'codelab-monitor'
     query_log_file: query_log_file.log
 
 scrape_configs:
   - job_name: 'aws-app'
-    scrape_interval: 10s
-    scrape_timeout: 10s
-    metrics_path: '/metrics'
-    honor_labels: false
     honor_timestamps: false
-    scheme: 'http'
 
     static_configs:
       - targets: ['prometheus:9090', 'node_exporter:9100', 'cadvisor:8080']
@@ -22,12 +15,7 @@ scrape_configs:
           service: 'monitor'
 
   - job_name: 'jenkins'
-    scrape_interval: 10s
-    scrape_timeout: 10s
-    metrics_path: '/metrics'
-    honor_labels: false
     honor_timestamps: false
-    scheme: 'http'
 
     static_configs:
       - targets: ['211.188.51.246:9100, 211.188.51.246:8080']
