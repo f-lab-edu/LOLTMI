@@ -8,7 +8,7 @@ global:
     query_log_file: query_log_file.log
 
 scrape_configs:
-  - job_name: 'monitoring-item'
+  - job_name: 'aws-app'
     scrape_interval: 10s
     scrape_timeout: 10s
     metrics_path: '/metrics'
@@ -18,5 +18,18 @@ scrape_configs:
 
     static_configs:
       - targets: ['prometheus:9090', 'node_exporter:9100', 'cadvisor:8080']
+        labels:
+          service: 'monitor'
+
+  - job_name: 'jenkins'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    metrics_path: '/metrics'
+    honor_labels: false
+    honor_timestamps: false
+    scheme: 'http'
+
+    static_configs:
+      - targets: ['211.188.51.246:9100, 211.188.51.246:8080']
         labels:
           service: 'monitor'
