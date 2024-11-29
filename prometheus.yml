@@ -21,3 +21,7 @@ scrape_configs:
       - targets: ['211.188.51.246:9100, 211.188.51.246:8080']
         labels:
           service: 'monitor'
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['223.130.130.162:9104]
