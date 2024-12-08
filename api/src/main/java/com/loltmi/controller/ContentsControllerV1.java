@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/contents")
-public class ContentsController {
+@RequestMapping("/contents/v1")
+public class ContentsControllerV1 {
     private final MatchExtraRepository matchExtraRepository;
     private final MatchExtraService matchExtraService;
 
