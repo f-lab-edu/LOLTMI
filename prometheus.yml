@@ -1,0 +1,27 @@
+global:
+  scrape_interval: 10s
+  scrape_timeout: 10s
+
+  external_labels:
+    query_log_file: query_log_file.log
+
+scrape_configs:
+  - job_name: 'aws-app'
+    honor_timestamps: false
+
+    static_configs:
+      - targets: ['prometheus:9090', 'node_exporter:9100', 'cadvisor:8080']
+        labels:
+          service: 'monitor'
+
+  - job_name: 'jenkins'
+    honor_timestamps: false
+
+    static_configs:
+      - targets: ['211.188.51.246:9100, 211.188.51.246:8080']
+        labels:
+          service: 'monitor'
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['223.130.130.162:9104]

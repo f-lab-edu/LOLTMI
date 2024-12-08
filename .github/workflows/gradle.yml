@@ -67,16 +67,16 @@ jobs:
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
     # batch.jar scp 전송
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
-        source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-        target: "/root/jenkins/workspace/spring-batch"
-        strip_components: 4
+    # - name: copy file via ssh password
+    #   uses: appleboy/scp-action@v0.1.7
+    #   with:
+    #     host: ${{ secrets.NCP_HOST }}
+    #     username: ${{ secrets.NCP_USERNAME }}
+    #     password: ${{ secrets.NCP_PASSWORD }}
+    #     port: ${{ secrets.NCP_PORT }}
+    #     source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+    #     target: "/root/jenkins/workspace/spring-batch"
+    #     strip_components: 4
         
   deploy:
     # needs를 통해 build job이 수행 성공시에 작업되도록 설정
@@ -88,10 +88,9 @@ jobs:
     - name: NCP login and docker image pull and run
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.NCP_HOST }}
-        username: ${{ secrets.NCP_USERNAME }}
-        password: ${{ secrets.NCP_PASSWORD }}
-        port: ${{ secrets.NCP_PORT }}
+        host: ${{ secrets.AWS_HOST }}
+        username: ${{ secrets.AWS_USERNAME }}
+        key: ${{ secrets.AWS_KEY }}
         script: |
           sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           sudo docker rm -f loltmi-app
