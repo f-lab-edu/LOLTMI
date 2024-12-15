@@ -11,11 +11,15 @@ import com.loltmi.riotapi.service.MatchExtraService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class StatisticsScheduler {
 
     private final MatchExtraRepository matchExtraRepository;
@@ -25,6 +29,7 @@ public class StatisticsScheduler {
 
     @Scheduled(cron = "* */5 * * * *")
     public void avgPingsUsed() throws JsonProcessingException {
+        log.info("avgPingsUsed() 실행");
         PingDto avgPingUsed = matchExtraRepository.avgPingUsed();
 
         String avgPingUsedJson = objectMapper.writeValueAsString(avgPingUsed);
