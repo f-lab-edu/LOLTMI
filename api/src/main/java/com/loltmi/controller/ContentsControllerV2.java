@@ -23,6 +23,11 @@ public class ContentsControllerV2 {
     private final StatisticsRepository statisticsRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @GetMapping("/list")
+    public List<Statistics> getContentList(){
+        return statisticsRepository.findAll();
+    }
+
     @GetMapping("/pings")
     public PingDto getAvgPingUsed() throws JsonProcessingException {
         Statistics findAvgPingUsed = statisticsRepository.findByName("avgPingUsed")
