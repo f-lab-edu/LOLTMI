@@ -49,6 +49,7 @@ public class StatisticsScheduler {
 
     @Scheduled(cron = "* */5 * * * *")
     public void winRateFirstTurretKill() throws JsonProcessingException {
+        log.info("winRateFirstTurretKill() 실행");
         Double winRateFirstTurretKill = matchExtraRepository.winRateFirstTurretKill();
 
         String winRateFirstTurretKillJson = objectMapper.writeValueAsString(winRateFirstTurretKill);
@@ -68,6 +69,7 @@ public class StatisticsScheduler {
 
     @Scheduled(cron = "* */5 * * * *")
     public void winRateFirstTurretKillBefore14() throws JsonProcessingException {
+        log.info("winRateFirstTurretKillBefore14() 실행");
         Double winRateFirstTurretKillBefore14 = matchExtraRepository.winRateFirstTurretKillBefore14();
 
         String winRateFirstTurretKillBefore14Json = objectMapper.writeValueAsString(winRateFirstTurretKillBefore14);
@@ -87,6 +89,7 @@ public class StatisticsScheduler {
 
     @Scheduled(cron = "* */5 * * * *")
     public void getMostUsedProfileIcon() throws JsonProcessingException {
+        log.info("getMostUsedProfileIcon() 실행");
         List<ProfileDto> mostUsedProfileIcon = matchExtraService.getMostUsedProfileIcon().stream().limit(20L).toList();
         String mostUsedProfileIconJson = objectMapper.writeValueAsString(mostUsedProfileIcon);
 
@@ -105,6 +108,7 @@ public class StatisticsScheduler {
 
     @Scheduled(cron = "* */5 * * * *")
     public void winRateTwoCrabKill() throws JsonProcessingException {
+        log.info("winRateTwoCrabKill() 실행");
         Double winRateTwoCrabKill = matchExtraRepository.winRateTwoCrabKill();
 
         String winRateTwoCrabKillJson = objectMapper.writeValueAsString(winRateTwoCrabKill);
