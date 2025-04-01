@@ -34,7 +34,7 @@ jobs:
       run: |
         cd ./common/src/main/resources # resources 폴더로 이동
         touch ./application-common.yaml # application.yml 생성
-        echo "${{ secrets.COMMON_YML }}" > ./application-common.yaml
+        echo "${COMMON_YML}" > ./application-common.yaml
 
         cd /home/runner/work/LOLTMI/LOLTMI
         cd ./batch/src/main/resources
@@ -42,6 +42,7 @@ jobs:
         echo "${SECRET_YML_BATCH}" > ./application-secret.yml
       env:
         SECRET_YML_BATCH: ${{ secrets.SECRET_YML_BATCH }}
+        COMMON_YML : ${{ secrets.COMMON_YML }}
         
     # Gradle Build를 위한 권한 부여
     - name: Grant execute permission for gradlew
@@ -67,16 +68,15 @@ jobs:
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
     # batch.jar scp 전송
-    # - name: copy file via ssh password
-    #   uses: appleboy/scp-action@v0.1.7
-    #   with:
-    #     host: ${{ secrets.NCP_HOST }}
-    #     username: ${{ secrets.NCP_USERNAME }}
-    #     password: ${{ secrets.NCP_PASSWORD }}
-    #     port: ${{ secrets.NCP_PORT }}
-    #     source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-    #     target: "/root/jenkins/workspace/spring-batch"
-    #     strip_components: 4
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.AWS_HOST }}
+        username: ${{ secrets.AWS_USERNAME }}
+        key: ${{ secrets.AWS_KEY }}
+        source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
+        target: "/home/ubuntu/jenkins/workspace/spring-batch"
+        strip_components: 5
         
   deploy:
     # needs를 통해 build job이 수행 성공시에 작업되도록 설정
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # NCP 로그인 / docker image pull & run
+    # AWS 로그인 / docker image pull & run
     - name: NCP login and docker image pull and run
       uses: appleboy/ssh-action@master
       with:
