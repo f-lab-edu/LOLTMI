@@ -75,8 +75,8 @@ jobs:
         username: ${{ secrets.AWS_USERNAME }}
         key: ${{ secrets.AWS_BATCH_KEY }}
         source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
-        target: "/home/ubuntu/jenkins/workspace/spring-batch/"
-        strip_components: 5
+        target: "/home/ubuntu/"
+        strip_components: 2
         
   deploy:
     # needs를 통해 build job이 수행 성공시에 작업되도록 설정
