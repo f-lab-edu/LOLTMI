@@ -68,7 +68,7 @@ jobs:
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
     # batch.jar scp 전송
-    - name: copy file via ssh password
+    - name: copy file via ssh key
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.AWS_BATCH_HOST }}
@@ -85,7 +85,7 @@ jobs:
 
     steps:
     # AWS 로그인 / docker image pull & run
-    - name: NCP login and docker image pull and run
+    - name: AWS login and docker image pull and run
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.AWS_HOST }}
