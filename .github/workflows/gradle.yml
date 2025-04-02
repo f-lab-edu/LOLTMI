@@ -66,10 +66,6 @@ jobs:
     # DockerHub Push
     - name: DockerHub Push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-
-    # test
-    - name: test
-      run: echo ${{ secrets.AWS_BATCH_HOST }}
       
     # batch.jar scp 전송
     - name: copy file via ssh key
@@ -81,6 +77,7 @@ jobs:
         source: "./batch/build/libs/batch-0.0.1-SNAPSHOT.jar"
         target: "/home/ubuntu/jenkins/workspace/spring-batch"
         strip_components: 5
+        overwrite: true
         
   deploy:
     # needs를 통해 build job이 수행 성공시에 작업되도록 설정
