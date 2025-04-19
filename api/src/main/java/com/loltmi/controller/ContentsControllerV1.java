@@ -1,5 +1,7 @@
 package com.loltmi.controller;
 
+import com.loltmi.riotapi.dto.CrabDto;
+import com.loltmi.riotapi.dto.FirstTurretKillDto;
 import com.loltmi.riotapi.dto.PingDto;
 import com.loltmi.riotapi.dto.ProfileDto;
 import com.loltmi.riotapi.repository.MatchExtraRepository;
@@ -23,13 +25,8 @@ public class ContentsControllerV1 {
     }
 
     @GetMapping("/firstTowerKill")
-    public Double getWinRateFirstTurretKill(){
+    public FirstTurretKillDto getWinRateFirstTurretKill(){
         return matchExtraRepository.winRateFirstTurretKill();
-    }
-
-    @GetMapping("/firstTowerKill14")
-    public Double getWinRateFirstTurretKill14(){
-        return matchExtraRepository.winRateFirstTurretKillBefore14();
     }
 
     @GetMapping("/profileIcon")
@@ -38,7 +35,7 @@ public class ContentsControllerV1 {
     }
 
     @GetMapping("/crabKill")
-    public Double getWinRateTwoCrabKill(){
+    public CrabDto getWinRateTwoCrabKill(){
         return matchExtraRepository.winRateTwoCrabKill();
     }
 }

@@ -3,6 +3,8 @@ package com.loltmi.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.loltmi.document.Card.CardRepository;
+import com.loltmi.document.Card.Cards;
 import com.loltmi.riotapi.dto.PingDto;
 import com.loltmi.riotapi.dto.ProfileDto;
 import com.loltmi.riotapi.entity.Statistics;
@@ -12,6 +14,7 @@ import com.loltmi.riotapi.service.MatchExtraService;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,13 +22,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contents/v2")
+@Slf4j
 public class ContentsControllerV2 {
     private final StatisticsRepository statisticsRepository;
+    private final CardRepository cardRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/list")
-    public List<Statistics> getContentList(){
-        return statisticsRepository.findAll();
+    public List<Cards> getContentList(){
+        List<Cards> all = cardRepository.findAll();
+        for (Cards cards : all) {
+        }
+
+        return all;
     }
 
     @GetMapping("/pings")
