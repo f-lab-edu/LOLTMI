@@ -103,6 +103,6 @@ jobs:
           sudo docker rm -f loltmi-app
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
           sudo docker run -d -p 8081:8080 --name loltmi-app ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-          # sudo docker image prune -f
+          sudo docker image prune -f
    
 
