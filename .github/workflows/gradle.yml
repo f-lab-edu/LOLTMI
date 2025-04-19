@@ -40,8 +40,15 @@ jobs:
         cd ./batch/src/main/resources
         touch ./application-secret.yml # application.yml 생성
         echo "${SECRET_YML_BATCH}" > ./application-secret.yml
+
+        cd /home/runner/work/LOLTMI/LOLTMI
+        cd ./api/src/main/resources
+        touch ./application-secret.yml # application.yml 생성
+        echo "${SECRET_YML_API}" > ./application-secret.yml
+        
       env:
         SECRET_YML_BATCH: ${{ secrets.SECRET_YML_BATCH }}
+        SECRET_YML_API: ${{ secrets.SECRET_YML_API }}
         COMMON_YML : ${{ secrets.COMMON_YML }}
         
     # Gradle Build를 위한 권한 부여
