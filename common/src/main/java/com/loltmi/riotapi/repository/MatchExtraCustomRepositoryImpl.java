@@ -59,8 +59,8 @@ public class MatchExtraCustomRepositoryImpl implements MatchExtraCustomRepositor
             .fetchOne();
 
         return FirstTurretKillDto.builder()
-            .winRateFirstTurretKill(winRateFirstTurretKill)
-            .winRateFirstTurretKillBefore14(winRateFirstTurretKillBefore14)
+            .winRateFirstTurretKill(winRateFirstTurretKill * 100)
+            .winRateFirstTurretKillBefore14(winRateFirstTurretKillBefore14 * 100)
             .build();
     }
 
@@ -94,9 +94,9 @@ public class MatchExtraCustomRepositoryImpl implements MatchExtraCustomRepositor
             .fetchOne();
 
         return CrabDto.builder()
-            .crabKill0(crabKill0)
-            .crabKill1(crabKill1)
-            .crabKill2(crabKill2)
+            .crabKill0(crabKill0 * 100)
+            .crabKill1(crabKill1 * 100)
+            .crabKill2(crabKill2 * 100)
             .build();
     }
 }
