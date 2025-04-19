@@ -4,6 +4,8 @@ import static com.loltmi.riotapi.entity.QMatchExtra.matchExtra;
 import static com.loltmi.riotapi.entity.QMatches.matches;
 import static com.loltmi.riotapi.entity.QPlayer.player;
 
+import com.loltmi.riotapi.dto.CrabDto;
+import com.loltmi.riotapi.dto.FirstTurretKillDto;
 import com.loltmi.riotapi.dto.PingDto;
 import com.loltmi.riotapi.dto.ProfileDto;
 import com.loltmi.riotapi.entity.QMatchExtra;
@@ -42,22 +44,24 @@ public class MatchExtraCustomRepositoryImpl implements MatchExtraCustomRepositor
     }
 
     @Override
-    public Double winRateFirstTurretKill() {
-        return jpaQueryFactory
+    public FirstTurretKillDto winRateFirstTurretKill() {
+        Double winRateFirstTurretKill = jpaQueryFactory
             .select(matchExtra.win.castToNum(Integer.class).avg())
-            .from(matchExtra).join(matches).on(matches.id.eq(matchExtra.matches.id))
+            .from(matchExtra)
             .where(matchExtra.firstTurretKilled.eq(1))
             .fetchOne();
-    }
 
-    @Override
-    public Double winRateFirstTurretKillBefore14() {
-        return jpaQueryFactory
+        Double winRateFirstTurretKillBefore14 = jpaQueryFactory
             .select(matchExtra.win.castToNum(Integer.class).avg())
-            .from(matchExtra).join(matches).on(matches.id.eq(matchExtra.matches.id))
+            .from(matchExtra)
             .where(matchExtra.firstTurretKilled.eq(1),
                 matchExtra.firstTurretKilledTime.lt(840))
             .fetchOne();
+
+        return FirstTurretKillDto.builder()
+            .winRateFirstTurretKill(winRateFirstTurretKill)
+            .winRateFirstTurretKillBefore14(winRateFirstTurretKillBefore14)
+            .build();
     }
 
     @Override
@@ -70,11 +74,29 @@ public class MatchExtraCustomRepositoryImpl implements MatchExtraCustomRepositor
     }
 
     @Override
-    public Double winRateTwoCrabKill() {
-        return jpaQueryFactory
+    public CrabDto winRateTwoCrabKill() {
+        Double crabKill0 = jpaQueryFactory
+            .select(matchExtra.win.castToNum(Integer.class).avg())
+            .from(matchExtra)
+            .where(matchExtra.initialCrabCount.eq(0))
+            .fetchOne();
+
+        Double crabKill1 = jpaQueryFactory
+            .select(matchExtra.win.castToNum(Integer.class).avg())
+            .from(matchExtra)
+            .where(matchExtra.initialCrabCount.eq(1))
+            .fetchOne();
+
+        Double crabKill2 = jpaQueryFactory
             .select(matchExtra.win.castToNum(Integer.class).avg())
             .from(matchExtra)
             .where(matchExtra.initialCrabCount.eq(2))
             .fetchOne();
+
+        return CrabDto.builder()
+            .crabKill0(crabKill0)
+            .crabKill1(crabKill1)
+            .crabKill2(crabKill2)
+            .build();
     }
 }

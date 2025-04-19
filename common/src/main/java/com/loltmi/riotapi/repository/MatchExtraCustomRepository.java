@@ -1,12 +1,13 @@
 package com.loltmi.riotapi.repository;
 
+import com.loltmi.riotapi.dto.CrabDto;
+import com.loltmi.riotapi.dto.FirstTurretKillDto;
 import com.loltmi.riotapi.dto.PingDto;
 import java.util.List;
 
 public interface MatchExtraCustomRepository{
     PingDto avgPingUsed();
-    Double winRateFirstTurretKill();
-    Double winRateFirstTurretKillBefore14();
+    FirstTurretKillDto winRateFirstTurretKill();
     List<Integer> getProfileIconids();
-    Double winRateTwoCrabKill();
+    CrabDto winRateTwoCrabKill();
 }
