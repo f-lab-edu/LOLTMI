@@ -21,6 +21,7 @@ public class Cards extends BaseDocument{
     private String name;
     private int hits;
     private List<Contents> contents;
+    private String unit;
 
     @NoArgsConstructor
     @AllArgsConstructor
