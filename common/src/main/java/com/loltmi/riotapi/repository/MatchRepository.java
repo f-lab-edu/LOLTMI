@@ -1,6 +1,7 @@
 package com.loltmi.riotapi.repository;
 
 import com.loltmi.riotapi.entity.Matches;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,10 @@ public interface MatchRepository extends JpaRepository<Matches, String> {
         nativeQuery = true
     )
     boolean existsById(@Param("id") String id);
+
+    @Query("select m.id"
+        + " from Matches m"
+        + " where m.id in (:ids)"
+    )
+    List<String> existByIds(@Param("ids") List<String> ids);
 }

@@ -9,8 +9,10 @@ import com.loltmi.riotapi.repository.MatchRepository;
 import com.loltmi.riotapi.repository.TeamsRepository;
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,14 +25,17 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.client.RestClient;
 
@@ -39,6 +44,7 @@ import org.springframework.web.client.RestClient;
 @RequiredArgsConstructor
 public class GetMatchListJobConfig {
     private final RiotApiProperties riotApiProperties;
+    private final RiotApiClient client;
     private final EntityManagerFactory entityManagerFactory;
 
     private final MatchRepository matchRepository;
@@ -51,16 +57,17 @@ public class GetMatchListJobConfig {
     private static final int RIOT_API_LIMIT_PER_MINUTE = 50;
     private static final int RIOT_API_LIMIT_PER_SECOND = 20;
 
-    //////////////////////// MatchIdList 받아오기
     @Bean
     public Job getMatchJob(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         return new JobBuilder("getMatchJob", jobRepository)
             .start(getMatchStep(jobRepository, transactionManager))
+            .next(deleteDuplicatedMatchIdsStep(jobRepository, transactionManager))
             .next(getMatchListStep(jobRepository, transactionManager))
             .incrementer(new RunIdIncrementer())
             .build();
     }
 
+    //////////////////////// MatchIdList 받아오기
     @Bean
     public Step getMatchStep(JobRepository jobRepository, PlatformTransactionManager transactionManager){
         log.info("getMatchStep 시작");
@@ -96,24 +103,11 @@ public class GetMatchListJobConfig {
     @Bean
     public ItemProcessor<String, List<String>> processor() {
         return puuid -> {
+            log.info("processor1 시작");
             if(currentRequestNum % RIOT_API_LIMIT_PER_MINUTE==0) Thread.sleep(1000 * 60);
             if(currentRequestNum % RIOT_API_LIMIT_PER_SECOND==0) Thread.sleep(1000);
 
-            RestClient restClient = RestClient.builder()
-                .baseUrl(riotApiProperties.getUri().getBaseAsia())
-                .build();
-
-            List<String> matchIds = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                    .path(riotApiProperties.getUri().getMatchList())
-                    .queryParam("start", 0)
-                    .queryParam("count", 20)
-                    .queryParam("type", "ranked")
-                    .queryParam("api_key", riotApiProperties.getApiKey())
-                    .build(puuid))
-                .retrieve()
-                .body(new ParameterizedTypeReference<>() {});
-
+            List<String> matchIds = client.getMatchIds(puuid);
             currentRequestNum++;
 
             return matchIds;
@@ -124,12 +118,25 @@ public class GetMatchListJobConfig {
     public ItemWriter<List<String>> writer() {
         return chunk -> {
             log.info("writer1 시작");
-            chunk.getItems().forEach(item -> item.forEach(this::addMatchId));
+            chunk.getItems().forEach(item -> matchIdset.addAll(item));
         };
     }
 
-    private void addMatchId(String matchId){
-        if(!matchRepository.existsById(matchId)) matchIdset.add(matchId);
+    ///////////////////////////////////MatchId 중복제거
+    @Bean
+    public Step deleteDuplicatedMatchIdsStep(JobRepository jobRepository,
+        PlatformTransactionManager transactionManager) {
+        log.info("deleteDuplicatedMatchIdsStep 시작");
+        return new StepBuilder("deleteDuplicatedMatchIdsStep", jobRepository)
+            .tasklet((contribution, chunkContext) -> {
+
+                List<String> existsIds = matchRepository.existByIds(matchIdset.stream().toList());
+                existsIds.forEach(matchIdset::remove);
+
+                return RepeatStatus.FINISHED;
+            }, transactionManager)
+            .allowStartIfComplete(true)
+            .build();
     }
 
     ////////////////////////////////////Match Data 가져오기
@@ -156,20 +163,23 @@ public class GetMatchListJobConfig {
     @Bean
     public ItemProcessor<String, MatchDto> processor2(){
         return matchId -> {
+            System.out.println("processor2 시작");
             if(currentRequestNum % RIOT_API_LIMIT_PER_MINUTE==0) Thread.sleep(1000 * 60);
             if(currentRequestNum % RIOT_API_LIMIT_PER_SECOND==0) Thread.sleep(1000);
 
-            RestClient restClient = RestClient.builder()
-                .baseUrl(riotApiProperties.getUri().getBaseAsia())
-                .build();
+//            RestClient restClient = RestClient.builder()
+//                .baseUrl(riotApiProperties.getUri().getBaseAsia())
+//                .build();
+//
+//            MatchDto matchDto = restClient.get()
+//                .uri(uriBuilder -> uriBuilder
+//                    .path(riotApiProperties.getUri().getMatchDetail())
+//                    .queryParam("api_key", riotApiProperties.getApiKey())
+//                    .build(matchId))
+//                .retrieve()
+//                .body(MatchDto.class);
 
-            MatchDto matchDto = restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                    .path(riotApiProperties.getUri().getMatchDetail())
-                    .queryParam("api_key", riotApiProperties.getApiKey())
-                    .build(matchId))
-                .retrieve()
-                .body(MatchDto.class);
+            MatchDto matchDto = client.getMatchDto(matchId);
 
             currentRequestNum++;
 
@@ -180,7 +190,6 @@ public class GetMatchListJobConfig {
     public ItemWriter<MatchDto> writer2() {
         return chunk -> {
             System.out.println("writer2 시작");
-
             chunk.getItems().forEach(this::save);
         };
     }
